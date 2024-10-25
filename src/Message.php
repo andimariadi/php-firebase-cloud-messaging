@@ -1,4 +1,5 @@
 <?php
+
 namespace sngrl\PhpFirebaseCloudMessaging;
 
 use sngrl\PhpFirebaseCloudMessaging\Recipient\Recipient;
@@ -20,7 +21,8 @@ class Message implements \JsonSerializable
     private $jsonData;
 
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->jsonData = [];
     }
 
@@ -92,7 +94,8 @@ class Message implements \JsonSerializable
      * @param mixed $value
      * @return $this
      */
-    public function setJsonKey($key, $value) {
+    public function setJsonKey($key, $value)
+    {
         $this->jsonData[$key] = $value;
         return $this;
     }
@@ -103,7 +106,8 @@ class Message implements \JsonSerializable
      * @param string $key
      * @return $this
      */
-    public function unsetJsonKey($key) {
+    public function unsetJsonKey($key)
+    {
         unset($this->jsonData[$key]);
         return $this;
     }
@@ -114,7 +118,8 @@ class Message implements \JsonSerializable
      * @param string $key
      * @return mixed
      */
-    public function getJsonKey($key) {
+    public function getJsonKey($key)
+    {
         return $this->jsonData[$key];
     }
 
@@ -123,7 +128,8 @@ class Message implements \JsonSerializable
      *
      * @return array
      */
-    public function getJsonData() {
+    public function getJsonData()
+    {
         return $this->jsonData;
     }
 
@@ -133,7 +139,8 @@ class Message implements \JsonSerializable
      * @param array $array
      * @return $this
      */
-    public function setJsonData($array) {
+    public function setJsonData($array)
+    {
         $this->jsonData = $array;
         return $this;
     }
@@ -162,10 +169,10 @@ class Message implements \JsonSerializable
 
         $target = $this->createTo();
 
-        if(is_array($target)){
+        if (is_array($target)) {
             $jsonData['registration_ids'] = $target;
         } else {
-            $jsonData['to'] = $target;
+            $jsonData['token'] = $target;
         }
 
         if ($this->collapseKey) {
@@ -174,9 +181,9 @@ class Message implements \JsonSerializable
         if ($this->data) {
             $jsonData['data'] = $this->data;
         }
-        if ($this->priority) {
-            $jsonData['priority'] = $this->priority;
-        }
+        // if ($this->priority) {
+        //     $jsonData['priority'] = $this->priority;
+        // }
         if ($this->contentAvailable) {
             $jsonData['content_available'] = $this->contentAvailable;
         }
@@ -184,7 +191,7 @@ class Message implements \JsonSerializable
             $jsonData['notification'] = $this->notification;
         }
 
-        return $jsonData;
+        return ["message" => $jsonData];
     }
 
     private function createTo()
@@ -193,8 +200,8 @@ class Message implements \JsonSerializable
             case Topic::class:
                 if (count($this->recipients) > 1) {
                     throw new \UnexpectedValueException(
-                        'Currently messages to target multiple topics do not work, but its obviously planned: '.
-                        'https://firebase.google.com/docs/cloud-messaging/topic-messaging#sending_topic_messages_from_the_server'
+                        'Currently messages to target multiple topics do not work, but its obviously planned: ' .
+                            'https://firebase.google.com/docs/cloud-messaging/topic-messaging#sending_topic_messages_from_the_server'
                     );
                 }
                 return sprintf('/topics/%s', current($this->recipients)->getName());
@@ -203,7 +210,7 @@ class Message implements \JsonSerializable
                 if (count($this->recipients) == 1) {
                     return current($this->recipients)->getToken();
                 } else {
-                    return array_map(function(Device $device){
+                    return array_map(function (Device $device) {
                         return $device->getToken();
                     }, $this->recipients);
                 }

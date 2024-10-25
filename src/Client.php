@@ -1,4 +1,5 @@
 <?php
+
 namespace sngrl\PhpFirebaseCloudMessaging;
 
 use GuzzleHttp;
@@ -8,7 +9,7 @@ use GuzzleHttp;
  */
 class Client implements ClientInterface
 {
-    const DEFAULT_API_URL = 'https://fcm.googleapis.com/fcm/send';
+    const DEFAULT_API_URL = 'POST https://fcm.googleapis.com/v1/projects/myproject-b5ae1/messages:send';
     const DEFAULT_TOPIC_ADD_SUBSCRIPTION_API_URL = 'https://iid.googleapis.com/iid/v1:batchAdd';
     const DEFAULT_TOPIC_REMOVE_SUBSCRIPTION_API_URL = 'https://iid.googleapis.com/iid/v1:batchRemove';
 
@@ -64,7 +65,7 @@ class Client implements ClientInterface
             $this->getApiUrl(),
             [
                 'headers' => [
-                    'Authorization' => sprintf('key=%s', $this->apiKey),
+                    'Authorization' => sprintf('Bearer %s', $this->apiKey),
                     'Content-Type' => 'application/json'
                 ],
                 'body' => json_encode($message)
@@ -112,7 +113,7 @@ class Client implements ClientInterface
             $url,
             [
                 'headers' => [
-                    'Authorization' => sprintf('key=%s', $this->apiKey),
+                    'Authorization' => sprintf('Bearer %s', $this->apiKey),
                     'Content-Type' => 'application/json'
                 ],
                 'body' => json_encode([
@@ -125,6 +126,9 @@ class Client implements ClientInterface
 
     private function getApiUrl()
     {
-        return isset($this->proxyApiUrl) ? $this->proxyApiUrl : self::DEFAULT_API_URL;
+        if (empty($this->proxyApiUrl)) {
+            throw new \UnexpectedValueException('proxyApiUrl is not set');
+        }
+        return $this->proxyApiUrl;
     }
 }
