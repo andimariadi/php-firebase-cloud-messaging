@@ -1,5 +1,21 @@
 {
     "name": "andimariadi/php-firebase-cloud-messaging",
+    "type": "library",
+    "repositories": [
+    {
+      "type": "package",
+      "package": {
+        "name": "andimariadi/php-firebase-cloud-messaging",
+        "version": "1.0.0",
+        "type": "vcs",
+        "source": {
+            "url": "https://github.com/andimariadi/php-firebase-cloud-messaging.git",
+          "type": "git",
+          "reference": "master"
+        }
+      }
+    }
+  ],
     "description": "PHP API for Firebase Cloud Messaging from Google",
     "license": "MIT",
     "keywords": ["PHP","FCM","Google","Firebase","Cloud","Notifications","Android","iOS","Chrome"],
